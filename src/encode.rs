@@ -114,6 +114,11 @@ fn gen_array<'a>(x: (&'a mut [u8], usize), data: &Vec<Frame>) -> Result<(&'a mut
       Frame::BulkString(ref b) => gen_bulkstring(x, &b)?,
       Frame::Null              => gen_null(x)?,
       Frame::Array(ref frames) => gen_array(x, frames)?,
+      Frame::Error(ref s)      => gen_error(x, s)?,
+      Frame::Moved(ref s)      => gen_error(x, s)?,
+      Frame::Ask(ref s)         => gen_error(x, s)?,
+      Frame::SimpleString(ref s) => gen_simplestring(x, s)?,
+      Frame::Integer(ref i)     => gen_integer(x, i)?,
       _ => return Err(GenError::CustomError(1))
     };
   }
@@ -172,7 +177,7 @@ mod tests {
   }
 
   fn to_bytes(s: &str) -> BytesMut {
-    BytesMut::from(str_to_bytes(s))
+    BytesMut::from(&s[..])
   }
 
   fn empty_bytes() -> BytesMut {
@@ -280,6 +285,20 @@ mod tests {
   }
 
   #[test]
+  fn should_encode_array_various_types_test() {
+    let expected = "*4\r\n$5\r\nWATCH\r\n:1000\r\n-SERVER_ERR error\r\n+OK\r\n";
+    let input = Frame::Array(vec![
+      Frame::BulkString(str_to_bytes("WATCH")),
+      Frame::Integer(1000),
+      Frame::Error("SERVER_ERR error".into()),
+      Frame::SimpleString("OK".into())
+    ]);
+
+    encode_and_verify_empty(&input, expected);
+    encode_and_verify_non_empty(&input, expected);
+  }
+
+  #[test]
   fn should_encode_raw_llen_req_example() {
     let expected = "*2\r\n$4\r\nLLEN\r\n$6\r\nmylist\r\n";
     let input = Frame::Array(vec![
@@ -331,6 +350,19 @@ mod tests {
       Frame::BulkString(str_to_bytes("HSET")),
       Frame::BulkString(str_to_bytes("foo")),
       Frame::Null
+    ]);
+
+    encode_raw_and_verify_empty(&input, expected);
+  }
+
+  #[test]
+  fn should_encode_raw_array_various_types_test() {
+    let expected = "*4\r\n$5\r\nWATCH\r\n:1000\r\n-SERVER_ERR error\r\n+OK\r\n";
+    let input = Frame::Array(vec![
+      Frame::BulkString(str_to_bytes("WATCH")),
+      Frame::Integer(1000),
+      Frame::Error("SERVER_ERR error".into()),
+      Frame::SimpleString("OK".into())
     ]);
 
     encode_raw_and_verify_empty(&input, expected);

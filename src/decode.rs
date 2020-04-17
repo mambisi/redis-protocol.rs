@@ -26,7 +26,7 @@ fn to_i64(s: &str) -> Result<i64, ParseIntError> {
 
 fn map_error(s: &str) -> Frame {
   utils::read_cluster_error(s)
-    .unwrap_or_else(|| Frame::Error(s.to_owned()))
+      .unwrap_or_else(|| Frame::Error(s.to_owned()))
 }
 
 fn isize_to_usize<'a>(s: isize) -> Result<usize, RedisProtocolError<'a>> {
@@ -156,7 +156,7 @@ mod tests {
   }
 
   fn to_bytes(s: &str) -> BytesMut {
-    BytesMut::from(str_to_bytes(s))
+    BytesMut::from(&s[..])
   }
 
   fn empty_bytes() -> BytesMut {
