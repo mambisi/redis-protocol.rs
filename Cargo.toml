@@ -1,13 +1,13 @@
 [package]
-authors = ["Mambisi Zempare <mambisizempare@gmail.com>"]
+authors = ["Alec Embke <aembke@gmail.com>"]
 description = "Structs and functions to implement the Redis protocol."
 homepage = "https://github.com/aembke/redis-protocol.rs"
 keywords = ["redis", "protocol", "nom", "encode", "decode"]
 license = "MIT"
 name = "redis-protocol"
 readme = "README.md"
-repository = "https://github.com/mambisi/redis-protocol.rs"
-version = "2.0.0"
+repository = "https://github.com/aembke/redis-protocol.rs"
+version = "1.0.0"
 
 [badges]
 
@@ -19,10 +19,10 @@ branch = "master"
 repository = "aembke/redis-protocol.rs"
 
 [dependencies]
-bytes = "0.5.4"
+bytes = "0.5"
 cookie-factory = "=0.2.4"
 crc16 = "0.3"
-log = "0.4.8"
+log = "0.4"
 nom = "4.0"
 pretty_env_logger = "0.2"
 
@@ -33,7 +33,7 @@ rand = "0.5"
 [lib]
 doc = true
 doctest = true
-name = "redis_protocol_2"
+name = "redis_protocol"
 test = true
 
 [profile.bench]
